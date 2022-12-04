@@ -16,15 +16,15 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: true,
-    required: true,
+    unique: [true, "Email already exists"],
+    required: [true, "Email required"],
     validate: [validator.isEmail, "Please provide a valid email"],
   },
   phone: {
     type: String,
     required: [true, "Please add phone number"],
     validate: [validator.isMobilePhone, "Please enter a valid Mobile Number"],
-    unique: true,
+    unique: [true, "Phone Number already exists"],
   },
   createdAt: {
     type: Date,
