@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: [true, "Email already exists"],
+    unique: true,
     required: [true, "Email required"],
     validate: [validator.isEmail, "Please provide a valid email"],
   },
@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please add phone number"],
     validate: [validator.isMobilePhone, "Please enter a valid Mobile Number"],
-    unique: [true, "Phone Number already exists"],
+    unique: true,
   },
   createdAt: {
     type: Date,
@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+userSchema.path("email").validate(async (email) => {
+  const emailCount = await mongoose.models.User.countDocuments({ email });
+  return !emailCount;
+}, "Email already exists");
 
 userSchema.methods.getJwtToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
