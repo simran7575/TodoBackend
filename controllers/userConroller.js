@@ -5,13 +5,18 @@ const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 const serviceId = process.env.TWILIO_SERVICE_ID;
 const client = require("twilio")(accountSid, authToken);
+const mongoose = require("mongoose");
 
 //signing up using otp authentication
 exports.sendingOtp = BigPromise(async (req, res, next) => {
-  let { phone, isLogin } = req.body;
+  let { phone, isLogin, email } = req.body;
 
   phone = "+91" + phone;
   const user = await User.findOne({ phone });
+  const emailCount = await mongoose.models.User.countDocuments({ email });
+  if (emailCount) {
+    return res.status(200).json(CustomError("Email Already in Use", 400));
+  }
 
   if (user && !isLogin) {
     return res.status(200).json(CustomError("User Already Exist", 400));
