@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+//Added a function to check the email uniqueness
 userSchema.path("email").validate(async (email) => {
   const emailCount = await mongoose.models.User.countDocuments({ email });
   return !emailCount;
